@@ -1725,6 +1725,15 @@
             updateCardCountDisplay();
         }
 
+        // 中断時の自動保存処理（タブ閉じる・ページ遷移・スマホでのバックグラウンド移行時）
+        window.addEventListener('beforeunload', () => saveData());
+        window.addEventListener('pagehide', () => saveData());
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden') {
+                saveData();
+            }
+        });
+
         function loadSaveData() {
             try {
                 let saved = localStorage.getItem(SAVE_KEY);
@@ -2000,6 +2009,7 @@
 
         function showGradeSelect() {
             stopBGM();
+            saveData();
             hideAllScreens();
             document.getElementById('stage-select-screen').classList.remove('hidden');
             renderGradeTabs();
